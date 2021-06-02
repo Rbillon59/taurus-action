@@ -1,0 +1,39 @@
+# action.yml
+name: 'taurus-action'
+description: 'Run a taurus performance test'
+inputs:
+  taurus_project_folder_name:
+    description: |
+      The name of the folder containing the taurus scenario and datas. \
+      The repo architecture should be like this : \
+      +-- repo_code \
+      +-- my-scenario \
+        +-- dataset.csv \
+        +-- my-scenario.yaml
+    required: true
+  taurus_command_line:
+    description: |
+      The taurus command line arguments to execute. Basically contains the yaml testfile to execute. More info here https://gettaurus.org/docs/Index/ \
+      The container entrypoint is the "bzt" command without any arguments \
+      The simpler case would be : \
+      my-scenario.yaml \
+      from the above file structure example, which will execute bzt my-scenario.yaml inside the container
+    required: true
+  blazemeter_api_token:
+    description: |
+      If you want to upload report to blazemeter you can set your API token here. \
+      It will appen the command line with : \
+      -o modules.blazemeter.token=${blazemeter-api-token} \
+      You can still use the -report inside the command line input to upload results as anonymous to Blazemeter
+    required: false
+outputs:
+  exit-code:
+    description: |
+      Taurus exit code : \
+        0 — No problems occured. \
+        1 — Taurus finished with a generic error (networking, internal Taurus errors) \
+        2 — Taurus was manually shut down (Ctrl-C by user, process received SIGKILL, etc) \
+        3 — Taurus was shut down automatically (e.g. Pass/Fail criteria, cloud tests failed, etc)
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
